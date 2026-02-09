@@ -1,0 +1,255 @@
+@baseUrl = https://localhost:5001/api
+
+###
+# AUTENTICAÇÃO - Login
+###
+
+### Register new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "joao",
+  "email": "joao@example.com",
+  "password": "password123"
+}
+
+###
+
+### Register another user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "maria",
+  "email": "maria@example.com",
+  "password": "senha456"
+}
+
+###
+
+### Login with valid credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "joao",
+  "password": "password123"
+}
+
+###
+
+### Login with invalid credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "joao",
+  "password": "wrongpassword"
+}
+
+###
+# USUÁRIOS - CRUD Operations
+###
+
+### Get all users (without authentication - SECURITY ISSUE!)
+GET {{baseUrl}}/users
+
+###
+
+### Get user by ID
+GET {{baseUrl}}/users/1
+
+###
+
+### Get user by ID (non-existent)
+GET {{baseUrl}}/users/999
+
+###
+
+### Create new user via Users endpoint
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "pedro",
+  "email": "pedro@example.com",
+  "password": "pedro123"
+}
+
+###
+
+### Update user
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "username": "joao_updated",
+  "email": "joao_updated@example.com",
+  "password": "newpassword456"
+}
+
+###
+
+### Delete user
+DELETE {{baseUrl}}/users/1
+
+###
+# JOBS - CRUD Operations
+###
+
+### Get all jobs for user 1
+GET {{baseUrl}}/users/1/jobs
+
+###
+
+### Get specific job
+GET {{baseUrl}}/users/1/jobs/1
+
+###
+
+### Create job for user 1
+POST {{baseUrl}}/users/1/jobs
+Content-Type: application/json
+
+{
+  "title": "Implementar autenticação JWT",
+  "description": "Substituir a autenticação atual por JWT tokens",
+  "dueDate": "2026-03-15T00:00:00Z"
+}
+
+###
+
+### Create another job for user 1
+POST {{baseUrl}}/users/1/jobs
+Content-Type: application/json
+
+{
+  "title": "Refatorar UserService",
+  "description": "Quebrar métodos grandes em componentes menores",
+  "dueDate": "2026-02-28T00:00:00Z"
+}
+
+###
+
+### Create job for user 2
+POST {{baseUrl}}/users/2/jobs
+Content-Type: application/json
+
+{
+  "title": "Code review segurança",
+  "description": "Revisar todos os pontos de segurança críticos",
+  "dueDate": "2026-02-20T00:00:00Z"
+}
+
+###
+
+### Update job status to InProgress
+PUT {{baseUrl}}/users/1/jobs/1
+Content-Type: application/json
+
+{
+  "title": "Implementar autenticação JWT",
+  "description": "Substituir a autenticação atual por JWT tokens",
+  "status": "InProgress",
+  "dueDate": "2026-03-15T00:00:00Z"
+}
+
+###
+
+### Complete job
+PUT {{baseUrl}}/users/1/jobs/2
+Content-Type: application/json
+
+{
+  "title": "Refatorar UserService",
+  "description": "Quebrar métodos grandes em componentes menores",
+  "status": "Completed",
+  "dueDate": "2026-02-28T00:00:00Z"
+}
+
+###
+
+### Delete job
+DELETE {{baseUrl}}/users/1/jobs/1
+
+###
+# EDGE CASES & SECURITY TESTS
+###
+
+### Try to access another user's job (should be forbidden)
+GET {{baseUrl}}/users/1/jobs/999
+
+###
+
+### Try to delete another user's job (SECURITY ISSUE - no authorization check!)
+DELETE {{baseUrl}}/users/1/jobs/999
+
+###
+
+### SQL Injection Test (application should be vulnerable)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin' --",
+  "password": "anything"
+}
+
+###
+
+### Test with special characters in job title
+POST {{baseUrl}}/users/1/jobs
+Content-Type: application/json
+
+{
+  "title": "Testing <script>alert('XSS')</script>",
+  "description": "Should this be escaped?",
+  "dueDate": "2026-03-01T00:00:00Z"
+}
+
+###
+
+### Create job with very long title
+POST {{baseUrl}}/users/1/jobs
+Content-Type: application/json
+
+{
+  "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "description": "Very long title test",
+  "dueDate": "2026-03-01T00:00:00Z"
+}
+
+###
+
+### Create job with null values (should fail validation)
+POST {{baseUrl}}/users/1/jobs
+Content-Type: application/json
+
+{
+  "title": null,
+  "description": null,
+  "dueDate": null
+}
+
+###
+
+### Test case sensitivity in username
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "JOAO",
+  "password": "password123"
+}
+
+###
+
+### Test empty credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "",
+  "password": ""
+}

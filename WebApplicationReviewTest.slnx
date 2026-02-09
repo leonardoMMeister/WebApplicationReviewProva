@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="WebApplicationReviewTest.Aplication/WebApplicationReviewTest.Aplication.csproj" />
+  <Project Path="WebApplicationReviewTest.Domain/WebApplicationReviewTest.Domain.csproj" />
+  <Project Path="WebApplicationReviewTest.Infra/WebApplicationReviewTest.Infra.csproj" />
+  <Project Path="WebApplicationReviewTest.Test/WebApplicationReviewTest.Test.csproj" />
+  <Project Path="WebApplicationReviewTest/WebApplicationReviewTest.csproj" />
+</Solution>
